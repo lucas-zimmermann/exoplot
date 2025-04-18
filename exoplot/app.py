@@ -1,23 +1,41 @@
+
 import streamlit as st
-import pandas as pd
 
-exoplanets = pd.read_csv('exoplanet_archive.csv', comment='#')
-
-
-st.title('Exoplanet Plotting App')
-st.write('This is a simple app to plot exoplanet data.')
-st.write('Upload your data file and select the plot type you want to create.')
+from data_loader import load_exoplanet_data, load_solar_system_data
+from sidebar import get_plot_parameters
+from plotters import create_plotly_scatter, add_solar_system_trace
 
 
-st.sidebar.header('User Input')
+def main():
+    """
+    Entry point for the Streamlit Exoplanet Plotting App.
 
-x_axis = st.sidebar.selectbox('Select x axis', ['Mass', 'Radius', 'Temperature'])
+    Loads data, collects user inputs, filters by detection method,
+    and renders an interactive Plotly scatter plot.
+    """
+    st.title("Exoplanet Plotting App")
+    st.write("Interactive visualization of exoplanet data with detection-method filtering.")
+
+    # Load full dataset
+    exo_data = load_exoplanet_data()
+
+    # Sidebar parameters
+    config = get_plot_parameters(exo_data)
+
+    # Filter by detection method if requested
+    if config['color_by'] == 'Discovery method' and config['selected_methods']:
+        exo_data = exo_data[exo_data[config['color_by'] == 'Discovery method' and 'discoverymethod' or ''] .isin(config['selected_methods'])]
+
+    # Build and show plot
+    fig = create_plotly_scatter(exo_data, config)
+
+    # Optional Solar System overlay
+    if config['solar_system']:
+        ss_data = load_solar_system_data()
+        fig = add_solar_system_trace(fig, ss_data, config)
+
+    st.plotly_chart(fig, use_container_width=True)
 
 
-y_axis = st.sidebar.selectbox('Select y axis', ['Mass', 'Radius', 'Temperature'])
-
-st.subheader('Scatter Plot')
-st.write('Plotting', x_axis, 'vs.', y_axis)
-st.scatter_chart(exoplanets[[x_axis, y_axis]])
-
-
+if __name__ == '__main__':
+    main()
