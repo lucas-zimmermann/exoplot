@@ -1,4 +1,3 @@
-
 import streamlit as st
 from data_loader import load_exoplanet_data, load_solar_system_data
 from sidebar import get_plot_parameters

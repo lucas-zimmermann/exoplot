@@ -1,5 +1,4 @@
 import streamlit as st
-import math
 from config import COLUMN_OPTIONS
 
 

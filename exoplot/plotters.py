@@ -1,6 +1,5 @@
 import plotly.express as px
 from config import DISPLAY_FOR, UNIT_MAPPING
-import streamlit as st
 
 
 DISPLAY_FOR.update({
