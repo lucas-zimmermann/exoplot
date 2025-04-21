@@ -1,16 +1,13 @@
 import plotly.express as px
-from config import COLUMN_OPTIONS
+from config import DISPLAY_FOR, UNIT_MAPPING
+import streamlit as st
 
 
-# Mapping from Matplotlib symbols to Plotly symbols
-MATPLOT_TO_PLOTLY = {
-    'o': 'circle',
-    's': 'square',
-    'D': 'diamond',
-    '*': 'star'
-}
+DISPLAY_FOR.update({
+    'pl_name': 'Planet Name',
+    'discoverymethod': 'Discovery Method'
+})
 
-DISPLAY_FOR = {col: disp for disp, col in COLUMN_OPTIONS.items()}
 
 
 def create_plotly_scatter(data, config) -> px.scatter:
@@ -26,7 +23,6 @@ def create_plotly_scatter(data, config) -> px.scatter:
     """
 
 
-
     # Create scatter plot
     fig = px.scatter(
         data,
@@ -35,24 +31,34 @@ def create_plotly_scatter(data, config) -> px.scatter:
         hover_name='pl_name',
         color_discrete_sequence=[config['fixed_color']] if config['color_by'] == 'Fixed color' else None,
         color='discoverymethod' if config['color_by'] == 'Discovery method' else None,
-        size_max=config['marker_size'] * 10
+        opacity=config['opacity'],
+        size_max=config['marker_size'] * 10,
+        title=f"{DISPLAY_FOR.get(config['x_axis'], config['x_axis'])} vs {DISPLAY_FOR.get(config['y_axis'], config['y_axis'])}",
+        labels={
+            config['x_axis']: (
+                f"{DISPLAY_FOR.get(config['x_axis'], config['x_axis'])}"
+                + (f" ({UNIT_MAPPING[config['x_axis']]})"
+                   if UNIT_MAPPING.get(config['x_axis']) else "")
+            ),
+            config['y_axis']: (
+                f"{DISPLAY_FOR.get(config['y_axis'], config['y_axis'])}"
+                + (f" ({UNIT_MAPPING[config['y_axis']]})"
+                   if UNIT_MAPPING.get(config['y_axis']) else "")
+            ),
+            'pl_name': DISPLAY_FOR['pl_name'],
+            'discoverymethod': DISPLAY_FOR['discoverymethod']
+        }
 
     )
-    fig.update_yaxes(showgrid=False)
+    fig.update_layout(title_x=0.35) # Center the title
+    fig.update_yaxes(showgrid=False) # Hide y-axis grid lines
 
     # Apply marker symbol and size
-    symbol = MATPLOT_TO_PLOTLY.get(config['marker_style'], 'circle')
+    symbol = config['marker_style']
     fig.update_traces(
         marker=dict(size=config['marker_size'] * 10, symbol=symbol),
         selector=dict(mode='markers')
     )
-
-    # Axis limits
-    if config['use_custom_limits']:
-        if config['x_limits']:
-            fig.update_xaxes(range=config['x_limits'])
-        if config['y_limits']:
-            fig.update_yaxes(range=config['y_limits'])
 
     # Log scaling
     if config['log_scale']:
@@ -66,6 +72,7 @@ def create_plotly_scatter(data, config) -> px.scatter:
         fig.update_xaxes(range=[0, 1])
     if config['y_axis'] == 'pl_orbeccen':
         fig.update_yaxes(range=[0, 1])
+
 
     return fig
 
@@ -82,13 +89,24 @@ def add_solar_system_trace(fig, ss_data, config):
     Returns:
     - Plotly Figure with additional traces.
     """
-    trace = px.scatter(
+    scatter = px.scatter(
         ss_data,
         x=config['x_axis'],
         y=config['y_axis'],
         hover_name='pl_name',
+        text='pl_name',
+        labels=DISPLAY_FOR,
         color_discrete_sequence=['orange'],
         size_max=config['marker_size'] * 10
-    ).data
-    fig.add_traces(trace)
+    )
+    scatter.update_traces(textposition='top center', mode='markers+text')
+    scatter.update_traces(
+        mode='markers+text',
+        textposition='top center',
+        textfont=dict(color='black', size=12),
+        texttemplate='<b>%{text}</b>',
+        marker=dict(opacity=0.7),
+
+    )
+    fig.add_traces(scatter.data)
     return fig

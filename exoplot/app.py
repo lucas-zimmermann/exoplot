@@ -1,10 +1,12 @@
 
 import streamlit as st
-
 from data_loader import load_exoplanet_data, load_solar_system_data
 from sidebar import get_plot_parameters
 from plotters import create_plotly_scatter, add_solar_system_trace
+from streamlit_plotly_events import plotly_events
 
+
+st.set_page_config(layout="wide")
 
 def main():
     """
@@ -13,8 +15,7 @@ def main():
     Loads data, collects user inputs, filters by detection method,
     and renders an interactive Plotly scatter plot.
     """
-    st.title("Exoplanet Plotting App")
-    st.write("Interactive visualization of exoplanet data with detection-method filtering.")
+    st.title("Exoplot: Interactive Exoplanet Plotting")
 
     # Load full dataset
     exo_data = load_exoplanet_data()
@@ -34,6 +35,9 @@ def main():
         ss_data = load_solar_system_data()
         fig = add_solar_system_trace(fig, ss_data, config)
 
+
+    # Update layout and display
+    fig.update_layout(height=800)
     st.plotly_chart(fig, use_container_width=True)
 
 
