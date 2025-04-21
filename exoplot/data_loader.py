@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def load_exoplanet_data(filepath: str = 'exoplanet_archive.csv', comment: str = '#') -> pd.DataFrame:
+def load_exoplanet_data(filepath: str = 'exoplot/exoplanet_archive.csv', comment: str = '#') -> pd.DataFrame:
     """
     Load exoplanet data from a CSV file.
 

@@ -17,12 +17,6 @@ def main():
     """
     st.title("Exoplot: Interactive Exoplanet Plotting")
 
-    st.write("Working dir:", os.getcwd())
-    st.write("Contents:", os.listdir(os.getcwd()))
-    # And recursively:
-    for root, dirs, files in os.walk('.', topdown=True):
-        st.write(root, "→", files)
-
     # Load full dataset
     exo_data = load_exoplanet_data()
 
