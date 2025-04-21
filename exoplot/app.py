@@ -3,6 +3,7 @@ from data_loader import load_exoplanet_data, load_solar_system_data
 from sidebar import get_plot_parameters
 from plotters import create_plotly_scatter, add_solar_system_trace
 from streamlit_plotly_events import plotly_events
+import os
 
 
 st.set_page_config(layout="wide")
