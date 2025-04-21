@@ -15,7 +15,7 @@ def load_exoplanet_data(filepath: str = 'exoplot/exoplanet_archive.csv', comment
     return pd.read_csv(filepath, comment=comment)
 
 
-def load_solar_system_data(filepath: str = 'solar_system.csv') -> pd.DataFrame:
+def load_solar_system_data(filepath: str = 'exoplot/solar_system.csv') -> pd.DataFrame:
     """
     Load solar system planet data from a CSV file.
 
