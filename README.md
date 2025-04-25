@@ -29,5 +29,5 @@
 
 1. **Clone the repo**  
    ```bash
-   git clone https://github.com/lucas-zimmermann/Exoplot.git
-   cd Exoplot
+   git clone https://github.com/lucas-zimmermann/exoplots.git
+   cd exoplots
